@@ -9,6 +9,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
+import Browse from "./pages/Browse";
 import VendorRegister from "./pages/VendorRegister";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/browse" element={<Browse />} />
                 <Route path="/vendor/register" element={<VendorRegister />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
