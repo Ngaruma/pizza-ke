@@ -10,6 +10,7 @@ import { Footer } from "@/components/Footer";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
+import Vendors from "./pages/Vendors";
 import VendorRegister from "./pages/VendorRegister";
 import VendorDashboard from "./pages/VendorDashboard";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,7 @@ const App = () => (
                 <Route path="/" element={<Home />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/browse" element={<Browse />} />
+                <Route path="/vendors" element={<Vendors />} />
                 <Route path="/vendor/register" element={<VendorRegister />} />
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
