@@ -13,6 +13,12 @@ import Browse from "./pages/Browse";
 import Vendors from "./pages/Vendors";
 import VendorRegister from "./pages/VendorRegister";
 import VendorDashboard from "./pages/VendorDashboard";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import Cookies from "./pages/Cookies";
+import VendorHelp from "./pages/VendorHelp";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
