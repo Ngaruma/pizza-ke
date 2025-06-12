@@ -84,8 +84,8 @@ export const VendorStats: React.FC<VendorStatsProps> = ({ orders, pizzas, vendor
             <div className="text-2xl font-bold">{stat.value}</div>
             <p className={`text-xs ${
               stat.changeType === 'positive' ? 'text-green-600' : 
-              stat.changeType === 'negative' ? 'text-red-600' : 
-              'text-muted-foreground'
+              stat.changeType === 'neutral' ? 'text-muted-foreground' : 
+              'text-red-600'
             }`}>
               {stat.change}
             </p>
