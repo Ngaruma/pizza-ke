@@ -284,6 +284,114 @@ export type Database = {
           },
         ]
       }
+      subscription_plans: {
+        Row: {
+          analytics_access: boolean | null
+          created_at: string | null
+          custom_branding: boolean | null
+          description: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          max_pizzas: number | null
+          monthly_price: number
+          name: string
+          priority_support: boolean | null
+          updated_at: string | null
+          yearly_price: number
+        }
+        Insert: {
+          analytics_access?: boolean | null
+          created_at?: string | null
+          custom_branding?: boolean | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_pizzas?: number | null
+          monthly_price: number
+          name: string
+          priority_support?: boolean | null
+          updated_at?: string | null
+          yearly_price: number
+        }
+        Update: {
+          analytics_access?: boolean | null
+          created_at?: string | null
+          custom_branding?: boolean | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          max_pizzas?: number | null
+          monthly_price?: number
+          name?: string
+          priority_support?: boolean | null
+          updated_at?: string | null
+          yearly_price?: number
+        }
+        Relationships: []
+      }
+      vendor_subscriptions: {
+        Row: {
+          billing_cycle: string | null
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan_id: string | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          updated_at: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_id?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_id?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          updated_at?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_subscriptions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendors: {
         Row: {
           address: string | null
@@ -292,6 +400,7 @@ export type Database = {
           business_name: string
           city: string | null
           created_at: string | null
+          current_plan_id: string | null
           delivery_fee: number | null
           delivery_time_max: number | null
           delivery_time_min: number | null
@@ -303,6 +412,7 @@ export type Database = {
           logo_url: string | null
           phone: string | null
           rating: number | null
+          subscription_status: string | null
           total_reviews: number | null
           updated_at: string | null
           user_id: string
@@ -314,6 +424,7 @@ export type Database = {
           business_name: string
           city?: string | null
           created_at?: string | null
+          current_plan_id?: string | null
           delivery_fee?: number | null
           delivery_time_max?: number | null
           delivery_time_min?: number | null
@@ -325,6 +436,7 @@ export type Database = {
           logo_url?: string | null
           phone?: string | null
           rating?: number | null
+          subscription_status?: string | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id: string
@@ -336,6 +448,7 @@ export type Database = {
           business_name?: string
           city?: string | null
           created_at?: string | null
+          current_plan_id?: string | null
           delivery_fee?: number | null
           delivery_time_max?: number | null
           delivery_time_min?: number | null
@@ -347,11 +460,20 @@ export type Database = {
           logo_url?: string | null
           phone?: string | null
           rating?: number | null
+          subscription_status?: string | null
           total_reviews?: number | null
           updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vendors_current_plan_id_fkey"
+            columns: ["current_plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

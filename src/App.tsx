@@ -14,6 +14,7 @@ import Vendors from "./pages/Vendors";
 import VendorRegister from "./pages/VendorRegister";
 import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
@@ -41,6 +42,8 @@ const App = () => (
                 <Route path="/vendors" element={<Vendors />} />
                 <Route path="/vendor/register" element={<VendorRegister />} />
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/subscription-plans" element={<SubscriptionPlans />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />

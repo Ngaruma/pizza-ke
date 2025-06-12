@@ -8,8 +8,9 @@ import { VendorStats } from '@/components/vendor/VendorStats';
 import { OrderManagement } from '@/components/vendor/OrderManagement';
 import { PizzaManagement } from '@/components/vendor/PizzaManagement';
 import { BusinessProfile } from '@/components/vendor/BusinessProfile';
+import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CreditCard } from 'lucide-react';
 
 export default function VendorDashboard() {
   const { user } = useAuth();
@@ -70,8 +71,9 @@ export default function VendorDashboard() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="subscription">Subscription</TabsTrigger>
             <TabsTrigger value="pizzas">My Pizzas</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="profile">Business Profile</TabsTrigger>
@@ -84,37 +86,77 @@ export default function VendorDashboard() {
               vendor={vendor} 
             />
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <OrderManagement orders={orders?.slice(0, 5) || []} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <OrderManagement orders={orders?.slice(0, 5) || []} />
+              </div>
               
-              <Card>
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">Quick Actions</h3>
-                  <div className="space-y-2">
-                    <button 
-                      onClick={() => setActiveTab('pizzas')}
-                      className="w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors"
-                    >
-                      <div className="font-medium">Manage Pizzas</div>
-                      <div className="text-sm text-gray-600">Add, edit, or disable your pizzas</div>
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('orders')}
-                      className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
-                    >
-                      <div className="font-medium">View All Orders</div>
-                      <div className="text-sm text-gray-600">Track and manage customer orders</div>
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('profile')}
-                      className="w-full text-left p-3 rounded-lg bg-green-50 hover:bg-green-100 transition-colors"
-                    >
-                      <div className="font-medium">Update Profile</div>
-                      <div className="text-sm text-gray-600">Edit business information and settings</div>
-                    </button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="space-y-4">
+                <SubscriptionStatus />
+                
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-semibold mb-4">Quick Actions</h3>
+                    <div className="space-y-2">
+                      <button 
+                        onClick={() => setActiveTab('subscription')}
+                        className="w-full text-left p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors"
+                      >
+                        <div className="font-medium">Manage Subscription</div>
+                        <div className="text-sm text-gray-600">Update billing and plan details</div>
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('pizzas')}
+                        className="w-full text-left p-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors"
+                      >
+                        <div className="font-medium">Manage Pizzas</div>
+                        <div className="text-sm text-gray-600">Add, edit, or disable your pizzas</div>
+                      </button>
+                      <button 
+                        onClick={() => setActiveTab('orders')}
+                        className="w-full text-left p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors"
+                      >
+                        <div className="font-medium">View All Orders</div>
+                        <div className="text-sm text-gray-600">Track and manage customer orders</div>
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="subscription" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      <CreditCard className="h-5 w-5 mr-2" />
+                      <h3 className="text-lg font-semibold">Subscription Management</h3>
+                    </div>
+                    <p className="text-gray-600 mb-4">
+                      Manage your subscription, update payment methods, and view billing history through the Stripe Customer Portal.
+                    </p>
+                    <SubscriptionStatus />
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div>
+                <Card>
+                  <CardContent className="p-6">
+                    <h4 className="font-semibold mb-4">Plan Benefits</h4>
+                    <ul className="text-sm text-gray-600 space-y-2">
+                      <li>• No commission fees</li>
+                      <li>• Direct payments to you</li>
+                      <li>• Advanced analytics</li>
+                      <li>• Priority support</li>
+                      <li>• Custom branding</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </TabsContent>
 

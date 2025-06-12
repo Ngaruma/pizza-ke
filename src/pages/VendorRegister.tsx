@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,12 +8,16 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Clock, DollarSign, Users, TrendingUp, Star } from 'lucide-react';
+import { SubscriptionPlans } from '@/components/subscription/SubscriptionPlans';
+import { useSubscription } from '@/hooks/useSubscription';
 
 export default function VendorRegister() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { createSubscription } = useSubscription();
   
+  const [step, setStep] = useState<'registration' | 'subscription'>('registration');
   const [formData, setFormData] = useState({
     businessName: '',
     description: '',
@@ -37,7 +40,7 @@ export default function VendorRegister() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRegistrationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!user) {
@@ -66,17 +69,18 @@ export default function VendorRegister() {
           delivery_time_max: formData.deliveryTimeMax,
           delivery_fee: formData.deliveryFee,
           is_active: false,
-          is_approved: false
+          is_approved: false,
+          subscription_status: 'inactive'
         });
 
       if (error) throw error;
 
       toast({
-        title: "Application submitted!",
-        description: "Your vendor application has been submitted for review. We'll contact you within 24-48 hours."
+        title: "Registration successful!",
+        description: "Now choose a subscription plan to activate your vendor account."
       });
 
-      navigate('/');
+      setStep('subscription');
     } catch (error: any) {
       toast({
         title: "Registration failed",
@@ -85,6 +89,14 @@ export default function VendorRegister() {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handlePlanSelect = async (planId: string, billingCycle: 'monthly' | 'yearly') => {
+    try {
+      createSubscription({ planId, billingCycle });
+    } catch (error) {
+      console.error('Error selecting plan:', error);
     }
   };
 
@@ -120,6 +132,31 @@ export default function VendorRegister() {
     "Marketing tools and promotions"
   ];
 
+  if (step === 'subscription') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Complete Your Registration
+            </h1>
+            <p className="text-gray-600">
+              Choose a subscription plan to activate your vendor account and start selling
+            </p>
+          </div>
+          
+          <SubscriptionPlans onPlanSelect={handlePlanSelect} />
+          
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-500">
+              You can change or cancel your subscription at any time from your dashboard
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       {/* Hero Section */}
@@ -136,11 +173,11 @@ export default function VendorRegister() {
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-              Free to join
+              Subscription-based model
             </div>
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-              Low commission rates
+              No commission fees
             </div>
             <div className="flex items-center">
               <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
@@ -186,7 +223,7 @@ export default function VendorRegister() {
               </ul>
             </div>
             <div className="bg-white p-8 rounded-lg shadow-lg">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Stats</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">Subscription Model</h3>
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Active Customers</span>
@@ -202,7 +239,7 @@ export default function VendorRegister() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Commission Rate</span>
-                  <span className="font-bold text-green-600">Only 12%</span>
+                  <span className="font-bold text-green-600">0% - Just subscription</span>
                 </div>
               </div>
             </div>
@@ -215,7 +252,7 @@ export default function VendorRegister() {
         <div className="container mx-auto max-w-2xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
-            <p className="text-gray-600">Fill out the form below and we'll review your application within 24-48 hours.</p>
+            <p className="text-gray-600">Fill out the form below to create your vendor profile, then choose a subscription plan.</p>
           </div>
 
           {!user ? (
@@ -230,7 +267,7 @@ export default function VendorRegister() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleRegistrationSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="businessName">Business Name *</Label>
@@ -350,11 +387,11 @@ export default function VendorRegister() {
                 className="w-full bg-orange-600 hover:bg-orange-700 py-6 text-lg"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Submitting Application..." : "Submit Vendor Application"}
+                {isSubmitting ? "Creating Profile..." : "Continue to Subscription Selection"}
               </Button>
 
               <p className="text-sm text-gray-500 text-center">
-                By submitting this form, you agree to our vendor terms and conditions.
+                After creating your profile, you'll choose a subscription plan to activate your account.
               </p>
             </form>
           )}
