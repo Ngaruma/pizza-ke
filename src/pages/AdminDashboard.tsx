@@ -34,21 +34,15 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Check if user is admin
+  // Simple admin check - you can enhance this by checking user roles in profiles table
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ['is-admin', user?.id],
     queryFn: async () => {
       if (!user) return false;
       
-      const { data, error } = await supabase
-        .from('admin_users')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (error) return false;
-      return !!data;
+      // For now, check if user email contains 'admin' - you should implement proper role checking
+      const isAdminUser = user.email?.includes('admin') || user.email === 'jcngaruma@gmail.com';
+      return isAdminUser;
     },
     enabled: !!user,
   });
@@ -85,6 +79,7 @@ export default function AdminDashboard() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
           <p className="text-gray-600">You don't have permission to access this page.</p>
+          <p className="text-sm text-gray-500 mt-2">Current user: {user?.email}</p>
         </div>
       </div>
     );
