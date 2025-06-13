@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -90,7 +91,14 @@ export function OrderManagement() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as Order[];
+      
+      // Transform the data to ensure proper typing
+      return (data || []).map(order => ({
+        ...order,
+        customer: Array.isArray(order.customer) ? order.customer[0] || null : order.customer,
+        vendor: Array.isArray(order.vendor) ? order.vendor[0] || null : order.vendor,
+        order_items: order.order_items || []
+      })) as Order[];
     },
   });
 
