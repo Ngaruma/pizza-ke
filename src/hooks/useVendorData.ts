@@ -21,6 +21,7 @@ export interface Vendor {
   delivery_time_max: number;
   is_active: boolean;
   is_approved: boolean;
+  subscription_status: string;
 }
 
 export interface Pizza {
@@ -162,6 +163,36 @@ export const useUpdateOrderStatus = () => {
       toast({
         title: "Success",
         description: "Order status updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+export const useDeletePizza = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (pizzaId: string) => {
+      const { error } = await supabase
+        .from('pizzas')
+        .delete()
+        .eq('id', pizzaId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendor-pizzas'] });
+      toast({
+        title: "Success",
+        description: "Pizza deleted successfully",
       });
     },
     onError: (error) => {

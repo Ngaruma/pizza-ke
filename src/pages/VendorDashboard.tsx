@@ -10,7 +10,8 @@ import { PizzaManagement } from '@/components/vendor/PizzaManagement';
 import { BusinessProfile } from '@/components/vendor/BusinessProfile';
 import { SubscriptionStatus } from '@/components/subscription/SubscriptionStatus';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, CreditCard } from 'lucide-react';
+import { Loader2, CreditCard, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function VendorDashboard() {
   const { user } = useAuth();
@@ -60,6 +61,9 @@ export default function VendorDashboard() {
     );
   }
 
+  const isSubscriptionActive = vendor.subscription_status === 'active';
+  const isVendorApproved = vendor.is_approved;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -68,6 +72,30 @@ export default function VendorDashboard() {
             Welcome back, {vendor.business_name}!
           </h1>
           <p className="text-gray-600">Manage your pizza business from here</p>
+        </div>
+
+        {/* Status Alerts */}
+        <div className="mb-6 space-y-4">
+          {!isSubscriptionActive && (
+            <Alert className="border-orange-200 bg-orange-50">
+              <AlertTriangle className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-orange-800">
+                Your subscription is inactive. Please activate a subscription to start receiving orders.
+                <a href="/subscription-plans" className="ml-2 text-orange-600 hover:text-orange-700 font-medium">
+                  View Plans →
+                </a>
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {!isVendorApproved && (
+            <Alert className="border-yellow-200 bg-yellow-50">
+              <AlertTriangle className="h-4 w-4 text-yellow-600" />
+              <AlertDescription className="text-yellow-800">
+                Your vendor profile is pending approval. You can manage your content, but it won't be visible to customers until approved.
+              </AlertDescription>
+            </Alert>
+          )}
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

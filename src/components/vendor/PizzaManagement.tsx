@@ -15,6 +15,9 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { AddPizzaForm } from './AddPizzaForm';
+import { EditPizzaForm } from './EditPizzaForm';
+import { PizzaViewModal } from './PizzaViewModal';
 
 interface PizzaManagementProps {
   pizzas: any[];
@@ -23,6 +26,8 @@ interface PizzaManagementProps {
 
 export const PizzaManagement: React.FC<PizzaManagementProps> = ({ pizzas, vendorId }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingPizza, setEditingPizza] = useState<any>(null);
+  const [viewingPizza, setViewingPizza] = useState<any>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -43,6 +48,45 @@ export const PizzaManagement: React.FC<PizzaManagementProps> = ({ pizzas, vendor
       });
     },
   });
+
+  const deletePizza = useMutation({
+    mutationFn: async (pizzaId: string) => {
+      const { error } = await supabase
+        .from('pizzas')
+        .delete()
+        .eq('id', pizzaId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vendor-pizzas'] });
+      toast({
+        title: "Success",
+        description: "Pizza deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (pizzaId: string, pizzaName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${pizzaName}"? This action cannot be undone.`)) {
+      deletePizza.mutate(pizzaId);
+    }
+  };
+
+  if (showAddForm) {
+    return <AddPizzaForm vendorId={vendorId} onClose={() => setShowAddForm(false)} />;
+  }
+
+  if (editingPizza) {
+    return <EditPizzaForm pizza={editingPizza} onClose={() => setEditingPizza(null)} />;
+  }
 
   return (
     <div className="space-y-6">
@@ -124,13 +168,26 @@ export const PizzaManagement: React.FC<PizzaManagementProps> = ({ pizzas, vendor
                       )}
                     </Button>
                     
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setViewingPizza(pizza)}
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setEditingPizza(pizza)}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleDelete(pizza.id, pizza.name)}
+                      disabled={deletePizza.isPending}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -139,6 +196,13 @@ export const PizzaManagement: React.FC<PizzaManagementProps> = ({ pizzas, vendor
             </Card>
           ))}
         </div>
+      )}
+
+      {viewingPizza && (
+        <PizzaViewModal 
+          pizza={viewingPizza} 
+          onClose={() => setViewingPizza(null)} 
+        />
       )}
     </div>
   );
