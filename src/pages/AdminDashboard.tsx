@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -39,12 +38,27 @@ export default function AdminDashboard() {
     enabled: !!user,
   });
 
+  // Fetch vendors data
+  const { data: vendors, isLoading: vendorsLoading, refetch: refetchVendors } = useQuery({
+    queryKey: ['admin-vendors'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('vendors')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: isAdmin === true,
+  });
+
   // Fetch dashboard stats
   const { data: dashboardStats, isLoading: statsLoading } = useQuery({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
       const [
-        { data: vendors },
+        { data: vendorsData },
         { data: orders },
         { data: users },
         { data: reviews }
@@ -63,10 +77,10 @@ export default function AdminDashboard() {
       }).length || 0;
 
       return {
-        totalVendors: vendors?.length || 0,
-        approvedVendors: vendors?.filter(v => v.is_approved).length || 0,
-        pendingVendors: vendors?.filter(v => !v.is_approved).length || 0,
-        activeVendors: vendors?.filter(v => v.is_active).length || 0,
+        totalVendors: vendorsData?.length || 0,
+        approvedVendors: vendorsData?.filter(v => v.is_approved).length || 0,
+        pendingVendors: vendorsData?.filter(v => !v.is_approved).length || 0,
+        activeVendors: vendorsData?.filter(v => v.is_active).length || 0,
         totalOrders: orders?.length || 0,
         todayOrders,
         totalUsers: users?.length || 0,
@@ -102,6 +116,7 @@ export default function AdminDashboard() {
     );
   }
 
+  // Stats Overview
   const stats = [
     {
       title: "Total Revenue",
@@ -208,10 +223,14 @@ export default function AdminDashboard() {
 
               <div className="p-6">
                 <TabsContent value="vendors" className="space-y-4">
-                  <VendorManagement 
-                    vendors={[]} 
-                    onRefresh={() => {}} 
-                  />
+                  {vendorsLoading ? (
+                    <div className="text-center py-8">Loading vendors...</div>
+                  ) : (
+                    <VendorManagement 
+                      vendors={vendors || []} 
+                      onRefresh={refetchVendors} 
+                    />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="orders" className="space-y-4">

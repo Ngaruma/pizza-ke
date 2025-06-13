@@ -23,6 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { 
   Search, 
   Eye, 
@@ -31,7 +38,9 @@ import {
   Trash2,
   Mail,
   Phone,
-  Calendar
+  Calendar,
+  Shield,
+  UserPlus
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -54,6 +63,7 @@ export function UserManagement() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [promotingUser, setPromotingUser] = useState<string | null>(null);
 
   const { data: users, isLoading, refetch } = useQuery({
     queryKey: ['admin-users'],
@@ -77,11 +87,12 @@ export function UserManagement() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, { role }) => {
       toast({
         title: "Success",
-        description: "User role updated successfully",
+        description: `User role updated to ${role} successfully`,
       });
+      setPromotingUser(null);
       refetch();
     },
     onError: (error) => {
@@ -90,6 +101,7 @@ export function UserManagement() {
         description: error.message,
         variant: "destructive",
       });
+      setPromotingUser(null);
     },
   });
 
@@ -133,6 +145,11 @@ export function UserManagement() {
   const handleDeleteClick = (userId: string) => {
     setUserToDelete(userId);
     setDeleteDialogOpen(true);
+  };
+
+  const handleRoleChange = (userId: string, newRole: UserRole) => {
+    setPromotingUser(userId);
+    updateUserRole.mutate({ userId, role: newRole });
   };
 
   if (isLoading) {
@@ -205,16 +222,36 @@ export function UserManagement() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge 
-                      variant={user.role === 'admin' ? 'default' : user.role === 'vendor' ? 'secondary' : 'outline'}
-                      className={
-                        user.role === 'admin' ? 'bg-red-100 text-red-800' : 
-                        user.role === 'vendor' ? 'bg-blue-100 text-blue-800' : 
-                        'bg-gray-100 text-gray-800'
-                      }
-                    >
-                      {user.role}
-                    </Badge>
+                    <div className="flex items-center space-x-2">
+                      <Badge 
+                        variant={user.role === 'admin' ? 'default' : user.role === 'vendor' ? 'secondary' : 'outline'}
+                        className={
+                          user.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                          user.role === 'vendor' ? 'bg-blue-100 text-blue-800' : 
+                          'bg-gray-100 text-gray-800'
+                        }
+                      >
+                        {user.role === 'admin' && <Shield className="h-3 w-3 mr-1" />}
+                        {user.role}
+                      </Badge>
+                      
+                      {user.role !== 'admin' && (
+                        <Select
+                          value={user.role}
+                          onValueChange={(value: UserRole) => handleRoleChange(user.id, value)}
+                          disabled={promotingUser === user.id}
+                        >
+                          <SelectTrigger className="w-24 h-8 text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="customer">Customer</SelectItem>
+                            <SelectItem value="vendor">Vendor</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center text-sm">
@@ -231,21 +268,6 @@ export function UserManagement() {
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      
-                      {user.role !== 'admin' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="text-blue-600 hover:text-blue-700"
-                          onClick={() => updateUserRole.mutate({ 
-                            userId: user.id, 
-                            role: user.role === 'vendor' ? 'customer' : 'vendor' 
-                          })}
-                          disabled={updateUserRole.isPending}
-                        >
-                          {user.role === 'vendor' ? <Ban className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
-                        </Button>
-                      )}
                       
                       <Button
                         size="sm"
@@ -333,6 +355,7 @@ export function UserManagement() {
                     <Badge 
                       variant={selectedUser.role === 'admin' ? 'default' : selectedUser.role === 'vendor' ? 'secondary' : 'outline'}
                     >
+                      {selectedUser.role === 'admin' && <Shield className="h-3 w-3 mr-1" />}
                       {selectedUser.role}
                     </Badge>
                   </div>
