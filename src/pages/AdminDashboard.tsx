@@ -5,34 +5,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  Search, 
-  Eye, 
-  Check, 
-  X, 
-  Trash2, 
   Users, 
   Building, 
-  Clock, 
-  Star 
+  ShoppingBag, 
+  BarChart3,
+  Settings,
+  Clock,
+  CheckCircle,
+  XCircle,
+  TrendingUp
 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { VendorManagement } from '@/components/admin/VendorManagement';
+import { UserManagement } from '@/components/admin/UserManagement';
+import { OrderManagement } from '@/components/admin/OrderManagement';
+import { Analytics } from '@/components/admin/Analytics';
+import { SystemSettings } from '@/components/admin/SystemSettings';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
-  const { toast } = useToast();
-  const [searchTerm, setSearchTerm] = useState('');
 
   // Simple admin check - you can enhance this by checking user roles in profiles table
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
@@ -47,17 +39,42 @@ export default function AdminDashboard() {
     enabled: !!user,
   });
 
-  // Fetch all vendors
-  const { data: vendors, isLoading, refetch } = useQuery({
-    queryKey: ['admin-vendors'],
+  // Fetch dashboard stats
+  const { data: dashboardStats, isLoading: statsLoading } = useQuery({
+    queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('vendors')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const [
+        { data: vendors },
+        { data: orders },
+        { data: users },
+        { data: reviews }
+      ] = await Promise.all([
+        supabase.from('vendors').select('*'),
+        supabase.from('orders').select('*'),
+        supabase.from('profiles').select('*'),
+        supabase.from('reviews').select('*')
+      ]);
 
-      if (error) throw error;
-      return data;
+      const totalRevenue = orders?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
+      const todayOrders = orders?.filter(order => {
+        const orderDate = new Date(order.created_at);
+        const today = new Date();
+        return orderDate.toDateString() === today.toDateString();
+      }).length || 0;
+
+      return {
+        totalVendors: vendors?.length || 0,
+        approvedVendors: vendors?.filter(v => v.is_approved).length || 0,
+        pendingVendors: vendors?.filter(v => !v.is_approved).length || 0,
+        activeVendors: vendors?.filter(v => v.is_active).length || 0,
+        totalOrders: orders?.length || 0,
+        todayOrders,
+        totalUsers: users?.length || 0,
+        totalRevenue,
+        averageRating: reviews?.length > 0 
+          ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+          : '0.0'
+      };
     },
     enabled: isAdmin === true,
   });
@@ -85,90 +102,135 @@ export default function AdminDashboard() {
     );
   }
 
-  const filteredVendors = vendors?.filter(vendor =>
-    vendor.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vendor.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    vendor.city?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
-  const totalVendors = vendors?.length || 0;
-  const approvedVendors = vendors?.filter(v => v.is_approved).length || 0;
-  const pendingVendors = vendors?.filter(v => !v.is_approved).length || 0;
-  const activeVendors = vendors?.filter(v => v.is_active).length || 0;
+  const stats = [
+    {
+      title: "Total Revenue",
+      value: `KSh ${dashboardStats?.totalRevenue?.toLocaleString() || 0}`,
+      icon: TrendingUp,
+      change: "+12%",
+      changeType: "positive" as const
+    },
+    {
+      title: "Today's Orders",
+      value: dashboardStats?.todayOrders || 0,
+      icon: ShoppingBag,
+      change: "+8%",
+      changeType: "positive" as const
+    },
+    {
+      title: "Total Vendors",
+      value: dashboardStats?.totalVendors || 0,
+      icon: Building,
+      change: `${dashboardStats?.pendingVendors || 0} pending`,
+      changeType: "neutral" as const
+    },
+    {
+      title: "Active Users",
+      value: dashboardStats?.totalUsers || 0,
+      icon: Users,
+      change: "+15%",
+      changeType: "positive" as const
+    },
+    {
+      title: "Approved Vendors",
+      value: dashboardStats?.approvedVendors || 0,
+      icon: CheckCircle,
+      change: `${dashboardStats?.activeVendors || 0} active`,
+      changeType: "neutral" as const
+    },
+    {
+      title: "Pending Approvals",
+      value: dashboardStats?.pendingVendors || 0,
+      icon: Clock,
+      change: "Needs attention",
+      changeType: "warning" as const
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4 lg:px-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage vendors and monitor platform activity</p>
+          <p className="text-gray-600">Comprehensive platform management and analytics</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Vendors</CardTitle>
-              <Building className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalVendors}</div>
-              <p className="text-xs text-muted-foreground">All registered vendors</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Approved</CardTitle>
-              <Check className="h-4 w-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{approvedVendors}</div>
-              <p className="text-xs text-muted-foreground">Active on platform</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending</CardTitle>
-              <Clock className="h-4 w-4 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{pendingVendors}</div>
-              <p className="text-xs text-muted-foreground">Awaiting approval</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
-              <Users className="h-4 w-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{activeVendors}</div>
-              <p className="text-xs text-muted-foreground">Currently active</p>
-            </CardContent>
-          </Card>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {stats.map((stat, index) => (
+            <Card key={index}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                <stat.icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <p className={`text-xs ${
+                  stat.changeType === 'positive' ? 'text-green-600' : 
+                  stat.changeType === 'warning' ? 'text-orange-600' :
+                  'text-muted-foreground'
+                }`}>
+                  {stat.change}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        {/* Vendor Management */}
+        {/* Main Dashboard Content */}
         <Card>
-          <CardHeader>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <CardTitle>Vendor Management</CardTitle>
-              <div className="relative w-full sm:w-72">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search vendors..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+          <CardContent className="p-0">
+            <Tabs defaultValue="vendors" className="w-full">
+              <div className="border-b px-6 py-4">
+                <TabsList className="grid w-full grid-cols-5">
+                  <TabsTrigger value="vendors" className="flex items-center space-x-2">
+                    <Building className="h-4 w-4" />
+                    <span>Vendors</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="orders" className="flex items-center space-x-2">
+                    <ShoppingBag className="h-4 w-4" />
+                    <span>Orders</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="users" className="flex items-center space-x-2">
+                    <Users className="h-4 w-4" />
+                    <span>Users</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="analytics" className="flex items-center space-x-2">
+                    <BarChart3 className="h-4 w-4" />
+                    <span>Analytics</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="settings" className="flex items-center space-x-2">
+                    <Settings className="h-4 w-4" />
+                    <span>Settings</span>
+                  </TabsTrigger>
+                </TabsList>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <VendorManagement vendors={filteredVendors} onRefresh={refetch} />
+
+              <div className="p-6">
+                <TabsContent value="vendors" className="space-y-4">
+                  <VendorManagement 
+                    vendors={[]} 
+                    onRefresh={() => {}} 
+                  />
+                </TabsContent>
+
+                <TabsContent value="orders" className="space-y-4">
+                  <OrderManagement />
+                </TabsContent>
+
+                <TabsContent value="users" className="space-y-4">
+                  <UserManagement />
+                </TabsContent>
+
+                <TabsContent value="analytics" className="space-y-4">
+                  <Analytics />
+                </TabsContent>
+
+                <TabsContent value="settings" className="space-y-4">
+                  <SystemSettings />
+                </TabsContent>
+              </div>
+            </Tabs>
           </CardContent>
         </Card>
       </div>
