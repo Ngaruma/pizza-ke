@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,6 +23,29 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface Customer {
+  full_name: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
+interface Vendor {
+  business_name: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
+interface OrderItem {
+  id: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  pizza: {
+    name: string | null;
+    description: string | null;
+  } | null;
+}
+
 interface Order {
   id: string;
   customer_id: string;
@@ -34,29 +56,12 @@ interface Order {
   delivery_address: string;
   created_at: string;
   updated_at: string;
-  estimated_delivery: string;
+  estimated_delivery: string | null;
   delivery_fee: number;
   payment_method: string;
-  customer: {
-    full_name: string;
-    email: string;
-    phone: string;
-  };
-  vendor: {
-    business_name: string;
-    email: string;
-    phone: string;
-  };
-  order_items: {
-    id: string;
-    quantity: number;
-    unit_price: number;
-    total_price: number;
-    pizza: {
-      name: string;
-      description: string;
-    };
-  }[];
+  customer: Customer | null;
+  vendor: Vendor | null;
+  order_items: OrderItem[] | null;
 }
 
 export function OrderManagement() {
@@ -195,13 +200,13 @@ export function OrderManagement() {
                   <TableCell>
                     <div>
                       <div className="font-medium">{order.customer?.full_name || 'Unknown'}</div>
-                      <div className="text-sm text-gray-500">{order.customer?.email}</div>
+                      <div className="text-sm text-gray-500">{order.customer?.email || 'No email'}</div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">{order.vendor?.business_name || 'Unknown'}</div>
-                      <div className="text-sm text-gray-500">{order.vendor?.email}</div>
+                      <div className="text-sm text-gray-500">{order.vendor?.email || 'No email'}</div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -326,8 +331,8 @@ export function OrderManagement() {
                   {selectedOrder.order_items?.map((item) => (
                     <div key={item.id} className="bg-gray-50 p-4 rounded-lg flex justify-between items-center">
                       <div>
-                        <h4 className="font-medium">{item.pizza?.name}</h4>
-                        <p className="text-sm text-gray-600">{item.pizza?.description}</p>
+                        <h4 className="font-medium">{item.pizza?.name || 'Unknown Pizza'}</h4>
+                        <p className="text-sm text-gray-600">{item.pizza?.description || 'No description'}</p>
                         <p className="text-sm">Quantity: {item.quantity}</p>
                       </div>
                       <div className="text-right">
@@ -335,7 +340,7 @@ export function OrderManagement() {
                         <p className="text-sm text-gray-500">{formatCurrency(item.unit_price)} each</p>
                       </div>
                     </div>
-                  ))}
+                  )) || <p className="text-gray-500">No items found</p>}
                 </div>
               </div>
               

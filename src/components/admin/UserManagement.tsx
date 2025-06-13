@@ -35,14 +35,16 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+type UserRole = 'customer' | 'vendor' | 'admin';
+
 interface User {
   id: string;
   email: string;
-  full_name: string;
-  phone: string;
-  role: string;
+  full_name: string | null;
+  phone: string | null;
+  role: UserRole;
   created_at: string;
-  avatar_url: string;
+  avatar_url: string | null;
 }
 
 export function UserManagement() {
@@ -67,7 +69,7 @@ export function UserManagement() {
   });
 
   const updateUserRole = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: string }) => {
+    mutationFn: async ({ userId, role }: { userId: string; role: UserRole }) => {
       const { error } = await supabase
         .from('profiles')
         .update({ role })
