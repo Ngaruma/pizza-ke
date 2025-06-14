@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,7 +21,8 @@ export const AddPizzaForm: React.FC<AddPizzaFormProps> = ({ vendorId, onClose })
     description: '',
     base_price: '',
     preparation_time: '15',
-    image_url: ''
+    image_url: '',
+    external_url: ''
   });
   const [sizes, setSizes] = useState([{ name: 'Medium', price_modifier: 0 }]);
   const [toppings, setToppings] = useState([{ name: 'Extra Cheese', price: 50 }]);
@@ -163,6 +163,19 @@ export const AddPizzaForm: React.FC<AddPizzaFormProps> = ({ vendorId, onClose })
                 placeholder="https://example.com/pizza.jpg"
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="external_url">Direct Link to Your Pizza Page (Optional)</Label>
+            <Input
+              id="external_url"
+              value={formData.external_url}
+              onChange={(e) => setFormData({...formData, external_url: e.target.value})}
+              placeholder="https://yourwebsite.com/pizza/margherita"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Add a direct link to this pizza on your website for customers to complete their purchase
+            </p>
           </div>
 
           {/* Sizes Section */}

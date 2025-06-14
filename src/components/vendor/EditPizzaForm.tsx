@@ -20,7 +20,8 @@ export const EditPizzaForm: React.FC<EditPizzaFormProps> = ({ pizza, onClose }) 
     description: pizza.description || '',
     base_price: pizza.base_price?.toString() || '',
     preparation_time: pizza.preparation_time?.toString() || '15',
-    image_url: pizza.image_url || ''
+    image_url: pizza.image_url || '',
+    external_url: pizza.external_url || ''
   });
   const [sizes, setSizes] = useState(pizza.sizes || [{ name: 'Medium', price_modifier: 0 }]);
   const [toppings, setToppings] = useState(pizza.toppings || [{ name: 'Extra Cheese', price: 50 }]);
@@ -162,6 +163,19 @@ export const EditPizzaForm: React.FC<EditPizzaFormProps> = ({ pizza, onClose }) 
                 placeholder="https://example.com/pizza.jpg"
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="external_url">Direct Link to Your Pizza Page (Optional)</Label>
+            <Input
+              id="external_url"
+              value={formData.external_url}
+              onChange={(e) => setFormData({...formData, external_url: e.target.value})}
+              placeholder="https://yourwebsite.com/pizza/margherita"
+            />
+            <p className="text-sm text-gray-500 mt-1">
+              Add a direct link to this pizza on your website for customers to complete their purchase
+            </p>
           </div>
 
           {/* Sizes Section */}

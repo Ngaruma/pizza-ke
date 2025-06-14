@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Clock, MapPin, Plus } from 'lucide-react';
+import { Star, Clock, MapPin, Plus, ExternalLink } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -14,6 +14,7 @@ interface Pizza {
   rating: number;
   total_reviews: number;
   preparation_time: number;
+  external_url?: string;
   vendor: {
     business_name: string;
     city: string;
@@ -103,10 +104,27 @@ export function PizzaCard({ pizza }: PizzaCardProps) {
                 View
               </Button>
             </Link>
-            <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
-              <Plus className="h-4 w-4 mr-1" />
-              Add
-            </Button>
+            {pizza.external_url ? (
+              <Button 
+                asChild 
+                size="sm" 
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                <a 
+                  href={pizza.external_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink className="h-4 w-4 mr-1" />
+                  Order
+                </a>
+              </Button>
+            ) : (
+              <Button size="sm" className="bg-orange-600 hover:bg-orange-700">
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>

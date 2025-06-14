@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -36,6 +35,7 @@ export interface Pizza {
   total_reviews: number;
   sizes: any[];
   toppings: any[];
+  external_url: string;
 }
 
 export interface Order {

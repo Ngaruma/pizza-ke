@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X, Pizza, Clock, Star } from 'lucide-react';
+import { X, Pizza, Clock, Star, ExternalLink } from 'lucide-react';
 
 interface PizzaViewModalProps {
   pizza: any;
@@ -99,6 +98,28 @@ export const PizzaViewModal: React.FC<PizzaViewModalProps> = ({ pizza, onClose }
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {pizza.external_url && (
+            <div className="text-center">
+              <Button 
+                asChild 
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                <a 
+                  href={pizza.external_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center"
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Order on Vendor's Website
+                </a>
+              </Button>
+              <p className="text-sm text-gray-500 mt-2">
+                Complete your purchase directly with the vendor
+              </p>
             </div>
           )}
         </CardContent>
