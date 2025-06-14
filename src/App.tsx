@@ -23,6 +23,8 @@ import Cookies from "./pages/Cookies";
 import VendorHelp from "./pages/VendorHelp";
 import Blogs from "./pages/Blogs";
 import BlogPost from "./pages/BlogPost";
+import Profile from "./pages/Profile";
+import Orders from "./pages/Orders";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +56,8 @@ const App = () => (
                 <Route path="/vendor/help" element={<VendorHelp />} />
                 <Route path="/blogs" element={<Blogs />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/orders" element={<Orders />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
