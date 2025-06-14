@@ -35,7 +35,7 @@ export interface Pizza {
   total_reviews: number;
   sizes: any[];
   toppings: any[];
-  external_url: string;
+  external_url?: string;
 }
 
 export interface Order {
