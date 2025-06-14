@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -159,7 +160,9 @@ export const useUpdateOrderStatus = () => {
       if (error) throw error;
     },
     onSuccess: () => {
+      // Invalidate both vendor orders and user orders queries
       queryClient.invalidateQueries({ queryKey: ['vendor-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['user-orders'] });
       toast({
         title: "Success",
         description: "Order status updated successfully",
