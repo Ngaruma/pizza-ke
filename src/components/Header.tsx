@@ -33,6 +33,9 @@ export function Header() {
             <Link to="/vendors" className="text-gray-700 hover:text-orange-600 transition-colors font-medium">
               Vendors
             </Link>
+            <Link to="/blogs" className="text-gray-700 hover:text-orange-600 transition-colors font-medium">
+              Blog
+            </Link>
             {user ? (
               <div className="flex items-center space-x-4">
                 <Link to="/cart" className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors">
@@ -97,6 +100,9 @@ export function Header() {
               </Link>
               <Link to="/vendors" className="py-2 text-gray-700 hover:text-orange-600 transition-colors">
                 Vendors
+              </Link>
+              <Link to="/blogs" className="py-2 text-gray-700 hover:text-orange-600 transition-colors">
+                Blog
               </Link>
               {user ? (
                 <>

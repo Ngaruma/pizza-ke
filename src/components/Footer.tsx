@@ -15,8 +15,8 @@ export function Footer() {
               <span>Pizza.ke</span>
             </Link>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Kenya's premier pizza marketplace connecting you with the best local vendors. 
-              Fresh ingredients, authentic flavors, delivered fast.
+              Kenya's premier pizza directory connecting you with the best local vendors. 
+              Discover amazing pizzas, find vendor information, and connect directly with local businesses.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="p-2 bg-gray-800 rounded-full hover:bg-orange-600 transition-colors">
@@ -37,12 +37,17 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link to="/browse" className="text-gray-300 hover:text-orange-400 transition-colors">
-                  Browse Pizzas
+                  Browse Vendors
                 </Link>
               </li>
               <li>
                 <Link to="/vendors" className="text-gray-300 hover:text-orange-400 transition-colors">
-                  Our Vendors
+                  All Vendors
+                </Link>
+              </li>
+              <li>
+                <Link to="/blogs" className="text-gray-300 hover:text-orange-400 transition-colors">
+                  Blog
                 </Link>
               </li>
               <li>
@@ -64,7 +69,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link to="/vendor/register" className="text-gray-300 hover:text-orange-400 transition-colors">
-                  Join as Vendor
+                  List Your Business
                 </Link>
               </li>
               <li>
