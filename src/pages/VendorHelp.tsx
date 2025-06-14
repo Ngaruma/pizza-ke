@@ -12,7 +12,7 @@ export default function VendorHelp() {
         <div className="container mx-auto px-4 text-center">
           <HelpCircle className="h-16 w-16 mx-auto mb-6 text-orange-200" />
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Vendor Support</h1>
-          <p className="text-xl">Get help with your Pizza.ke vendor account</p>
+          <p className="text-xl">Get help with your Pizza.ke directory listing</p>
         </div>
       </div>
 
@@ -26,7 +26,7 @@ export default function VendorHelp() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                Get instant help from our vendor support team
+                Get instant help with your directory listing
               </p>
               <Button className="bg-orange-600 hover:bg-orange-700">
                 Start Chat
@@ -41,7 +41,7 @@ export default function VendorHelp() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                Speak directly with our vendor success team
+                Speak directly with our listing support team
               </p>
               <Button variant="outline">
                 +254 700 123 456
@@ -56,7 +56,7 @@ export default function VendorHelp() {
             </CardHeader>
             <CardContent>
               <p className="text-gray-600 mb-4">
-                Send us a detailed message about your issue
+                Send us questions about your directory listing
               </p>
               <Button variant="outline">
                 vendors@pizza.ke
@@ -75,48 +75,48 @@ export default function VendorHelp() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">How do I get started as a vendor?</CardTitle>
+                  <CardTitle className="text-lg">How do I get listed on Pizza.ke?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Complete the vendor registration form, provide required documents, 
-                    and wait for approval. Our team will guide you through the setup process.
+                    Complete the vendor registration form with your business details and pizza offerings. 
+                    Our team will review and approve your listing within 48 hours.
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">How do I update my menu items?</CardTitle>
+                  <CardTitle className="text-lg">How do I add external links to my pizzas?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Log into your vendor dashboard and navigate to "My Pizzas" section. 
-                    You can add, edit, or remove items, update prices, and modify descriptions.
+                    When adding or editing pizza listings, include your website URL where customers 
+                    can view details and place orders. This directs customers to your own site for checkout.
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">When do I receive payments?</CardTitle>
+                  <CardTitle className="text-lg">Do you handle payments or orders?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Payments are transferred to your account weekly on Fridays, minus our 
-                    platform fee. You can view your earnings in the dashboard.
+                    No, Pizza.ke is a directory service. All transactions, payments, and order fulfillment 
+                    are handled directly between you and your customers through your own website.
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">How do I handle order cancellations?</CardTitle>
+                  <CardTitleClassName="text-lg">What are the listing fees?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Orders can be cancelled within 5 minutes of placement. For later cancellations, 
-                    contact support. Frequent cancellations may affect your vendor rating.
+                    Basic directory listings are free. Premium listing features with enhanced visibility 
+                    and promotional opportunities are available for a monthly fee.
                   </p>
                 </CardContent>
               </Card>
@@ -125,36 +125,36 @@ export default function VendorHelp() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">What are the commission fees?</CardTitle>
+                  <CardTitle className="text-lg">How do customers find my business?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Our platform fee is 15% per order, which includes payment processing, 
-                    customer support, and platform maintenance. No hidden fees.
+                    Customers browse our directory by location, cuisine type, and ratings. They can 
+                    view your pizza offerings and click through to your website to place orders.
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">How do I improve my vendor rating?</CardTitle>
+                  <CardTitle className="text-lg">Can I update my listing information?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Maintain food quality, ensure timely preparation, respond to customer 
-                    feedback, and keep your menu information accurate and up-to-date.
+                    Yes, log into your vendor dashboard to update business information, pizza descriptions, 
+                    prices, images, and external links to your website anytime.
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Can I set my own delivery areas?</CardTitle>
+                  <CardTitle className="text-lg">How do customer reviews work?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Yes, you can define your delivery zones and set different fees for 
-                    different areas through your vendor dashboard settings.
+                    Customers can leave reviews about their experience with your business. 
+                    Reviews help build trust and improve your visibility in search results.
                   </p>
                 </CardContent>
               </Card>
@@ -165,8 +165,8 @@ export default function VendorHelp() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Use the "Report Issue" button in your dashboard or contact support 
-                    immediately. Include screenshots and detailed descriptions.
+                    Contact our support team immediately if you experience issues with your listing, 
+                    dashboard access, or external links. Include screenshots when possible.
                   </p>
                 </CardContent>
               </Card>
@@ -185,9 +185,9 @@ export default function VendorHelp() {
             <Card className="hover:shadow-md transition-shadow">
               <CardContent className="p-6 text-center">
                 <FileText className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Getting Started Guide</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Listing Setup Guide</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Complete setup instructions for new vendors
+                  Step-by-step instructions for creating your directory listing
                 </p>
                 <Button variant="outline" size="sm">Download PDF</Button>
               </CardContent>
@@ -198,7 +198,7 @@ export default function VendorHelp() {
                 <FileText className="h-8 w-8 text-orange-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-gray-900 mb-2">Best Practices</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Tips to maximize your success on our platform
+                  Tips to optimize your listing and attract more customers
                 </p>
                 <Button variant="outline" size="sm">Download PDF</Button>
               </CardContent>
@@ -207,9 +207,9 @@ export default function VendorHelp() {
             <Card className="hover:shadow-md transition-shadow">
               <CardContent className="p-6 text-center">
                 <FileText className="h-8 w-8 text-orange-600 mx-auto mb-3" />
-                <h3 className="font-semibold text-gray-900 mb-2">Marketing Toolkit</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">External Link Guide</h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Promotional materials and marketing strategies
+                  How to effectively link customers to your website for orders
                 </p>
                 <Button variant="outline" size="sm">Download PDF</Button>
               </CardContent>
