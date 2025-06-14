@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -250,13 +249,15 @@ export function VendorManagement({ vendors, onRefresh }: VendorManagementProps) 
                   <span className="text-sm">{formatDate(vendor.created_at)}</span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => setSelectedVendor(vendor)}
+                      aria-label="View Vendor Details"
                     >
                       <Eye className="h-4 w-4" />
+                      <span className="ml-1">View</span>
                     </Button>
                     
                     {!vendor.is_approved && (
@@ -266,8 +267,10 @@ export function VendorManagement({ vendors, onRefresh }: VendorManagementProps) 
                         className="text-green-600 hover:text-green-700"
                         onClick={() => approveVendor.mutate(vendor.id)}
                         disabled={approveVendor.isPending}
+                        aria-label="Approve Vendor"
                       >
                         <Check className="h-4 w-4" />
+                        <span className="ml-1">Approve</span>
                       </Button>
                     )}
                     
@@ -278,8 +281,10 @@ export function VendorManagement({ vendors, onRefresh }: VendorManagementProps) 
                         className="text-orange-600 hover:text-orange-700"
                         onClick={() => rejectVendor.mutate(vendor.id)}
                         disabled={rejectVendor.isPending}
+                        aria-label="Reject Vendor"
                       >
                         <X className="h-4 w-4" />
+                        <span className="ml-1">Reject</span>
                       </Button>
                     )}
                     
@@ -289,17 +294,21 @@ export function VendorManagement({ vendors, onRefresh }: VendorManagementProps) 
                       className={vendor.is_active ? "text-red-600 hover:text-red-700" : "text-green-600 hover:text-green-700"}
                       onClick={() => toggleVendorStatus.mutate({ vendorId: vendor.id, isActive: vendor.is_active })}
                       disabled={toggleVendorStatus.isPending}
+                      aria-label={vendor.is_active ? "Deactivate Vendor" : "Activate Vendor"}
                     >
                       {vendor.is_active ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+                      <span className="ml-1">{vendor.is_active ? "Deactivate" : "Activate"}</span>
                     </Button>
                     
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="destructive"
                       className="text-red-600 hover:text-red-700"
                       onClick={() => handleDeleteClick(vendor.id)}
+                      aria-label="Delete Vendor"
                     >
                       <Trash2 className="h-4 w-4" />
+                      <span className="ml-1">Delete</span>
                     </Button>
                   </div>
                 </TableCell>
