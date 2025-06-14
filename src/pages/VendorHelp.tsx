@@ -111,7 +111,7 @@ export default function VendorHelp() {
 
               <Card>
                 <CardHeader>
-                  <CardTitleClassName="text-lg">What are the listing fees?</CardTitle>
+                  <CardTitle className="text-lg">What are the listing fees?</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">

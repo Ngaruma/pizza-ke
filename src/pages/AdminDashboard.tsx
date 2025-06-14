@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,13 +15,15 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  TrendingUp
+  TrendingUp,
+  FileText
 } from 'lucide-react';
 import { VendorManagement } from '@/components/admin/VendorManagement';
 import { UserManagement } from '@/components/admin/UserManagement';
 import { OrderManagement } from '@/components/admin/OrderManagement';
 import { Analytics } from '@/components/admin/Analytics';
 import { SystemSettings } from '@/components/admin/SystemSettings';
+import { BlogManagement } from '@/components/admin/BlogManagement';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -61,12 +64,14 @@ export default function AdminDashboard() {
         { data: vendorsData },
         { data: orders },
         { data: users },
-        { data: reviews }
+        { data: reviews },
+        { data: blogs }
       ] = await Promise.all([
         supabase.from('vendors').select('*'),
         supabase.from('orders').select('*'),
         supabase.from('profiles').select('*'),
-        supabase.from('reviews').select('*')
+        supabase.from('reviews').select('*'),
+        supabase.from('blogs').select('*')
       ]);
 
       const totalRevenue = orders?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
@@ -85,6 +90,8 @@ export default function AdminDashboard() {
         todayOrders,
         totalUsers: users?.length || 0,
         totalRevenue,
+        totalBlogs: blogs?.length || 0,
+        publishedBlogs: blogs?.filter(b => b.status === 'published').length || 0,
         averageRating: reviews?.length > 0 
           ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
           : '0.0'
@@ -147,10 +154,10 @@ export default function AdminDashboard() {
       changeType: "positive" as const
     },
     {
-      title: "Approved Vendors",
-      value: dashboardStats?.approvedVendors || 0,
-      icon: CheckCircle,
-      change: `${dashboardStats?.activeVendors || 0} active`,
+      title: "Published Blogs",
+      value: dashboardStats?.publishedBlogs || 0,
+      icon: FileText,
+      change: `${(dashboardStats?.totalBlogs || 0) - (dashboardStats?.publishedBlogs || 0)} drafts`,
       changeType: "neutral" as const
     },
     {
@@ -197,7 +204,7 @@ export default function AdminDashboard() {
           <CardContent className="p-0">
             <Tabs defaultValue="vendors" className="w-full">
               <div className="border-b px-6 py-4">
-                <TabsList className="grid w-full grid-cols-5">
+                <TabsList className="grid w-full grid-cols-6">
                   <TabsTrigger value="vendors" className="flex items-center space-x-2">
                     <Building className="h-4 w-4" />
                     <span>Vendors</span>
@@ -209,6 +216,10 @@ export default function AdminDashboard() {
                   <TabsTrigger value="users" className="flex items-center space-x-2">
                     <Users className="h-4 w-4" />
                     <span>Users</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="blogs" className="flex items-center space-x-2">
+                    <FileText className="h-4 w-4" />
+                    <span>Blogs</span>
                   </TabsTrigger>
                   <TabsTrigger value="analytics" className="flex items-center space-x-2">
                     <BarChart3 className="h-4 w-4" />
@@ -239,6 +250,10 @@ export default function AdminDashboard() {
 
                 <TabsContent value="users" className="space-y-4">
                   <UserManagement />
+                </TabsContent>
+
+                <TabsContent value="blogs" className="space-y-4">
+                  <BlogManagement />
                 </TabsContent>
 
                 <TabsContent value="analytics" className="space-y-4">
