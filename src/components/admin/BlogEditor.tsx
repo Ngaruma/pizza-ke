@@ -73,7 +73,7 @@ export const BlogEditor: React.FC<BlogEditorProps> = ({ blog, onClose, onSave })
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim('-');
+      .replace(/^-|-$/g, '');
   };
 
   // Estimate reading time
