@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, User, ArrowLeft, Share2 } from 'lucide-react';
+import { SocialMeta } from '@/components/SocialMeta';
 
 // This would typically come from a CMS or database
 const getBlogPostBySlug = (slug: string) => {
@@ -179,6 +179,10 @@ export default function BlogPost() {
   if (!post) {
     return (
       <div className="min-h-screen bg-gray-50 py-12">
+        <SocialMeta 
+          title="Post Not Found - Pizza.ke Blog"
+          description="The blog post you're looking for doesn't exist."
+        />
         <div className="container mx-auto px-4 lg:px-6 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Post Not Found</h1>
           <p className="text-gray-600 mb-8">The blog post you're looking for doesn't exist.</p>
@@ -209,6 +213,13 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SocialMeta 
+        title={`${post.title} - Pizza.ke Blog`}
+        description={post.excerpt}
+        image={post.image}
+        url={window.location.href}
+      />
+      
       {/* Hero Section */}
       <div className="bg-white">
         <div className="container mx-auto px-4 lg:px-6 py-8">
