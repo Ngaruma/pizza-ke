@@ -46,18 +46,27 @@ const App = () => (
                 <Route path="/vendors" element={<Vendors />} />
                 <Route path="/vendor/register" element={<VendorRegister />} />
                 <Route path="/vendor/dashboard" element={<VendorDashboard />} />
+                <Route path="/vendor/help" element={<VendorHelp />} />
                 <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/subscription-plans" element={<SubscriptionPlans />} />
+                <Route path="/subscriptions" element={<SubscriptionPlans />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/cookies" element={<Cookies />} />
-                <Route path="/vendor/help" element={<VendorHelp />} />
                 <Route path="/blogs" element={<Blogs />} />
+                <Route path="/blog" element={<Blogs />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/orders" element={<Orders />} />
+                <Route path="/my-orders" element={<Orders />} />
+                {/* Redirect common alternative paths */}
+                <Route path="/home" element={<Home />} />
+                <Route path="/login" element={<Auth />} />
+                <Route path="/signup" element={<Auth />} />
+                <Route path="/register" element={<Auth />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
