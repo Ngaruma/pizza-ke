@@ -155,39 +155,164 @@ function pizza_ke_widgets_init() {
 add_action( 'widgets_init', 'pizza_ke_widgets_init' );
 
 /**
- * Custom template tags for this theme
+ * Custom post types
  */
-require get_template_directory() . '/inc/template-tags.php';
+function pizza_ke_register_post_types() {
+    // Pizza post type
+    register_post_type( 'pizza', array(
+        'labels' => array(
+            'name' => __( 'Pizzas', 'pizza-ke' ),
+            'singular_name' => __( 'Pizza', 'pizza-ke' ),
+            'add_new' => __( 'Add New Pizza', 'pizza-ke' ),
+            'add_new_item' => __( 'Add New Pizza', 'pizza-ke' ),
+            'edit_item' => __( 'Edit Pizza', 'pizza-ke' ),
+            'new_item' => __( 'New Pizza', 'pizza-ke' ),
+            'view_item' => __( 'View Pizza', 'pizza-ke' ),
+            'search_items' => __( 'Search Pizzas', 'pizza-ke' ),
+            'not_found' => __( 'No pizzas found', 'pizza-ke' ),
+            'not_found_in_trash' => __( 'No pizzas found in trash', 'pizza-ke' ),
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'rewrite' => array( 'slug' => 'pizzas' ),
+        'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+        'menu_icon' => 'dashicons-food',
+        'show_in_rest' => true,
+    ) );
+
+    // Vendor post type
+    register_post_type( 'vendor', array(
+        'labels' => array(
+            'name' => __( 'Vendors', 'pizza-ke' ),
+            'singular_name' => __( 'Vendor', 'pizza-ke' ),
+            'add_new' => __( 'Add New Vendor', 'pizza-ke' ),
+            'add_new_item' => __( 'Add New Vendor', 'pizza-ke' ),
+            'edit_item' => __( 'Edit Vendor', 'pizza-ke' ),
+            'new_item' => __( 'New Vendor', 'pizza-ke' ),
+            'view_item' => __( 'View Vendor', 'pizza-ke' ),
+            'search_items' => __( 'Search Vendors', 'pizza-ke' ),
+            'not_found' => __( 'No vendors found', 'pizza-ke' ),
+            'not_found_in_trash' => __( 'No vendors found in trash', 'pizza-ke' ),
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'rewrite' => array( 'slug' => 'vendors' ),
+        'supports' => array( 'title', 'editor', 'thumbnail', 'excerpt', 'comments' ),
+        'menu_icon' => 'dashicons-store',
+        'show_in_rest' => true,
+    ) );
+}
+add_action( 'init', 'pizza_ke_register_post_types' );
 
 /**
- * Functions which enhance the theme by hooking into WordPress
+ * Add meta boxes for custom fields
  */
-require get_template_directory() . '/inc/template-functions.php';
+function pizza_ke_add_meta_boxes() {
+    add_meta_box(
+        'pizza-details',
+        __( 'Pizza Details', 'pizza-ke' ),
+        'pizza_ke_pizza_meta_box_callback',
+        'pizza'
+    );
+
+    add_meta_box(
+        'vendor-details',
+        __( 'Vendor Details', 'pizza-ke' ),
+        'pizza_ke_vendor_meta_box_callback',
+        'vendor'
+    );
+}
+add_action( 'add_meta_boxes', 'pizza_ke_add_meta_boxes' );
 
 /**
- * Customizer additions
+ * Pizza meta box callback
  */
-require get_template_directory() . '/inc/customizer.php';
+function pizza_ke_pizza_meta_box_callback( $post ) {
+    wp_nonce_field( 'pizza_ke_save_pizza_meta', 'pizza_ke_pizza_meta_nonce' );
+    
+    $price = get_post_meta( $post->ID, '_pizza_price', true );
+    $vendor = get_post_meta( $post->ID, '_pizza_vendor', true );
+    $rating = get_post_meta( $post->ID, '_pizza_rating', true );
+    $featured = get_post_meta( $post->ID, '_pizza_featured', true );
+    
+    echo '<table class="form-table">';
+    echo '<tr><th><label for="pizza_price">' . __( 'Price (KES)', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="number" id="pizza_price" name="pizza_price" value="' . esc_attr( $price ) . '" /></td></tr>';
+    echo '<tr><th><label for="pizza_vendor">' . __( 'Vendor', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="text" id="pizza_vendor" name="pizza_vendor" value="' . esc_attr( $vendor ) . '" /></td></tr>';
+    echo '<tr><th><label for="pizza_rating">' . __( 'Rating (1-5)', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="number" id="pizza_rating" name="pizza_rating" value="' . esc_attr( $rating ) . '" min="1" max="5" step="0.1" /></td></tr>';
+    echo '<tr><th><label for="pizza_featured">' . __( 'Featured', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="checkbox" id="pizza_featured" name="pizza_featured" value="yes"' . checked( $featured, 'yes', false ) . ' /></td></tr>';
+    echo '</table>';
+}
 
 /**
- * Custom post types and meta boxes
+ * Vendor meta box callback
  */
-require get_template_directory() . '/inc/custom-post-types.php';
+function pizza_ke_vendor_meta_box_callback( $post ) {
+    wp_nonce_field( 'pizza_ke_save_vendor_meta', 'pizza_ke_vendor_meta_nonce' );
+    
+    $location = get_post_meta( $post->ID, '_vendor_location', true );
+    $phone = get_post_meta( $post->ID, '_vendor_phone', true );
+    $rating = get_post_meta( $post->ID, '_vendor_rating', true );
+    $reviews = get_post_meta( $post->ID, '_vendor_reviews', true );
+    $featured = get_post_meta( $post->ID, '_vendor_featured', true );
+    
+    echo '<table class="form-table">';
+    echo '<tr><th><label for="vendor_location">' . __( 'Location', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="text" id="vendor_location" name="vendor_location" value="' . esc_attr( $location ) . '" /></td></tr>';
+    echo '<tr><th><label for="vendor_phone">' . __( 'Phone', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="tel" id="vendor_phone" name="vendor_phone" value="' . esc_attr( $phone ) . '" /></td></tr>';
+    echo '<tr><th><label for="vendor_rating">' . __( 'Rating (1-5)', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="number" id="vendor_rating" name="vendor_rating" value="' . esc_attr( $rating ) . '" min="1" max="5" step="0.1" /></td></tr>';
+    echo '<tr><th><label for="vendor_reviews">' . __( 'Number of Reviews', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="number" id="vendor_reviews" name="vendor_reviews" value="' . esc_attr( $reviews ) . '" /></td></tr>';
+    echo '<tr><th><label for="vendor_featured">' . __( 'Featured', 'pizza-ke' ) . '</label></th>';
+    echo '<td><input type="checkbox" id="vendor_featured" name="vendor_featured" value="yes"' . checked( $featured, 'yes', false ) . ' /></td></tr>';
+    echo '</table>';
+}
 
 /**
- * AJAX handlers
+ * Save meta box data
  */
-require get_template_directory() . '/inc/ajax-handlers.php';
+function pizza_ke_save_meta_boxes( $post_id ) {
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
 
-/**
- * Security enhancements
- */
-require get_template_directory() . '/inc/security.php';
+    // Save pizza meta
+    if ( isset( $_POST['pizza_ke_pizza_meta_nonce'] ) && wp_verify_nonce( $_POST['pizza_ke_pizza_meta_nonce'], 'pizza_ke_save_pizza_meta' ) ) {
+        if ( isset( $_POST['pizza_price'] ) ) {
+            update_post_meta( $post_id, '_pizza_price', sanitize_text_field( $_POST['pizza_price'] ) );
+        }
+        if ( isset( $_POST['pizza_vendor'] ) ) {
+            update_post_meta( $post_id, '_pizza_vendor', sanitize_text_field( $_POST['pizza_vendor'] ) );
+        }
+        if ( isset( $_POST['pizza_rating'] ) ) {
+            update_post_meta( $post_id, '_pizza_rating', sanitize_text_field( $_POST['pizza_rating'] ) );
+        }
+        update_post_meta( $post_id, '_pizza_featured', isset( $_POST['pizza_featured'] ) ? 'yes' : 'no' );
+    }
 
-/**
- * Performance optimizations
- */
-require get_template_directory() . '/inc/performance.php';
+    // Save vendor meta
+    if ( isset( $_POST['pizza_ke_vendor_meta_nonce'] ) && wp_verify_nonce( $_POST['pizza_ke_vendor_meta_nonce'], 'pizza_ke_save_vendor_meta' ) ) {
+        if ( isset( $_POST['vendor_location'] ) ) {
+            update_post_meta( $post_id, '_vendor_location', sanitize_text_field( $_POST['vendor_location'] ) );
+        }
+        if ( isset( $_POST['vendor_phone'] ) ) {
+            update_post_meta( $post_id, '_vendor_phone', sanitize_text_field( $_POST['vendor_phone'] ) );
+        }
+        if ( isset( $_POST['vendor_rating'] ) ) {
+            update_post_meta( $post_id, '_vendor_rating', sanitize_text_field( $_POST['vendor_rating'] ) );
+        }
+        if ( isset( $_POST['vendor_reviews'] ) ) {
+            update_post_meta( $post_id, '_vendor_reviews', sanitize_text_field( $_POST['vendor_reviews'] ) );
+        }
+        update_post_meta( $post_id, '_vendor_featured', isset( $_POST['vendor_featured'] ) ? 'yes' : 'no' );
+    }
+}
+add_action( 'save_post', 'pizza_ke_save_meta_boxes' );
 
 /**
  * Add custom image sizes
